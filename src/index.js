@@ -1,15 +1,14 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import { Hono } from 'hono';
+import backend from './backend/internal.js';
+import frontend from './frontend/frontend.js';
+import { notFound_html } from '../public/notFound/notFound.js';
 
-export default {
-	async fetch(request, env, ctx) {
-		return new Response('Hello World!');
-	},
-};
+
+const app = new Hono();
+
+app.route('/internal', backend);
+app.route('/', frontend);
+
+app.notFound((c) => c.html(notFound_html, 404));
+
+export default app;
