@@ -5,9 +5,10 @@ export const authConfig = {
     dataSource:'daddydrive-v2',
     database:'Crypthunt',
     collections:{
-        cc1:'Users',
+        cc1:'TestUsers',
         cc2:'Questions'
     }
 },
-jwtSecret:'cryptic'
+jwtSecret:'cryptic',
+devFolio:'https://portfolio.dhakrey.eu.org'
 }

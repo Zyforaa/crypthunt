@@ -1,4 +1,54 @@
-export const login_html = `
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CryptHunt</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-950 text-white">
+    <!-- Navbar -->
+    <nav class="flex justify-between items-center py-4 px-8 bg-gray-950">
+        <!-- Logo -->
+        <div class="flex items-center space-x-2">
+            <div
+                class="bg-gradient-to-r from-blue-500 to-purple-600 w-10 h-10 rounded-full flex justify-center items-center">
+                <span class="text-white text-xl font-bold">C</span>
+            </div>
+            <h1 class="text-2xl font-bold">CryptHunt</h1>
+        </div>
+
+        <!-- Menu Items and Login Button -->
+        <ul id="menu" class="hidden md:flex space-x-6 text-lg">
+            <li><a href="/" class="hover:text-blue-500">Home</a></li>
+            <li><a href="/play" class="hover:text-blue-500">Play</a></li>
+            <li><a href="/leaderboard" class="hover:text-blue-500">LeaderBoard</a></li>
+            <li><a href="/rules" class="hover:text-blue-500">Rules</a></li>
+            <li><a href="/contact" class="hover:text-blue-500">ContactUs</a></li>
+        </ul>
+        <div class="flex items-center space-x-4">
+  
+           
+            <!-- Hamburger Button -->
+            <button id="menu-btn" class="block md:hidden text-gray-300 text-2xl focus:outline-none">
+                <span>☰</span>
+            </button>
+
+           
+        </div>
+    </nav>
+            <!-- Dropdown Menu for Small Screens -->
+            <div id="dropdown-menu" class="hidden bg-gray-800 md:hidden">
+                <ul class="space-y-2 text-lg text-center py-4">
+                    <li><a href="/" class="block hover:text-blue-500">Home</a></li>
+                    <li><a href="/play" class="block hover:text-blue-500">Play</a></li>
+                    <li><a href="/leaderboard" class="block hover:text-blue-500">LeaderBoard</a></li>
+                    <li><a href="/rules" class="block hover:text-blue-500">Rules</a></li>
+                    <li><a href="/contact" class="block hover:text-blue-500">ContactUs</a></li>
+                </ul>
+            </div>
     
 
     <!-- Main Content -->
@@ -64,5 +114,13 @@ export const login_html = `
             }
         });
     </script>
+        <script>
+            const menuBtn = document.getElementById('menu-btn');
+            const dropdownMenu = document.getElementById('dropdown-menu');
+            menuBtn.addEventListener('click', () => {
+                dropdownMenu.classList.toggle('hidden');
+            });
+        </script>
+</body>
 
-`
+</html>
