@@ -16,67 +16,82 @@ export const play_html = `
             </div>
         </div>
     </section>
-    <script>
-        // Utility function to parse URL parameters
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
-        }
-
-        const questionElement = document.getElementById('question');
-        const answerInput = document.getElementById('answer');
-        const submitBtn = document.getElementById('submit-btn');
-        const nextBtn = document.getElementById('next-btn');
-
-        // Fetch question using the queNo parameter from the URL
-        async function fetchQuestion(queNo) {
-            try {
-                const response = await fetch('/internal/getquestion', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: "queNo=" + queNo
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch question');
-                }
-
-                const data = await response.json();
-                if (data.success) {
-                    questionElement.textContent = data.question || 'No question found!';
-                } else {
-                    questionElement.textContent = data.type;
-                }
-            } catch (error) {
-                console.error('Error fetching question:', error);
-                questionElement.textContent = 'Error loading question!';
-            }
-        }
-
-        // Extract queNo from URL and fetch the question
-        const queNo = getQueryParam('queNo');
-        if (queNo) {
-            fetchQuestion(queNo);
-        } else {
-            questionElement.textContent = 'Invalid question number!';
-        }
-
-        // Submit button functionality
-        submitBtn.addEventListener('click', () => {
-            const userAnswer = answerInput.value.trim();
-            alert('You submitted :' + userAnswer);
-        });
-
-        // Next button functionality
-        nextBtn.addEventListener('click', () => {
-            const nextQueNo = parseInt(queNo, 10) + 1;
-            window.location.href = '/play?queNo='+ nextQueNo;
-        });
-    </script>
 </body>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+    let currentQuestionNumber = 0;
 
+    // Function to fetch and display the next question
+    async function fetchQuestion(questionNumber) {
+        try {
+            const response = await fetch("/internal/getQuestion", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ questionNumber }),
+            });
+
+            if (!response.ok) throw new Error("Failed to fetch question");
+
+            const data = await response.json();
+            document.getElementById("question").innerText = data.question;
+            document.getElementById("answer").value = ""; // Clear input
+            currentQuestionNumber = questionNumber;
+        } catch (error) {
+            console.error("Error fetching question:", error);
+            alert("Failed to load question. Please try again.");
+        }
+    }
+
+    try {
+        // Fetch last attempted question number
+        const statusResponse = await fetch("/internal/getQuestionsStatus", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        if (!statusResponse.ok) throw new Error("Failed to fetch question status");
+
+        const statusData = await statusResponse.json();
+        currentQuestionNumber = statusData.lastAttemptedQuestion + 1;
+
+        // Fetch and display the first question
+        await fetchQuestion(currentQuestionNumber);
+
+        // Handle submit button click
+        document.getElementById("submit-btn").addEventListener("click", async () => {
+            const answerInput = document.getElementById("answer");
+            const answer = answerInput.value.trim();
+
+            if (!answer) {
+                alert("Please enter an answer before submitting.");
+                return;
+            }
+
+            // Submit answer along with question number
+            const submitResponse = await fetch("/internal/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ questionNumber: currentQuestionNumber, answer }),
+            });
+
+            if (!submitResponse.ok) alert("Failed to submit answer");
+
+            const submitData = await submitResponse.json();
+
+            // Fetch and show the next question
+            if (submitData.nextqueNumber) {
+                fetchQuestion(submitData.nextqueNumber);
+            } else {
+                alert("No more questions available.");
+            }
+        });
+    } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred. Please try again.");
+    }
+});
+
+</script>
 </html>
 `
 

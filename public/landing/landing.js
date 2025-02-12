@@ -1,34 +1,54 @@
 import { siteConfig } from "../../src/config/siteConfig";
 export const landing_html = `
 
-    <section class="text-center py-32 px-8">
-        <h2 class="text-4xl font-bold mb-4">The Hunt is about to begin!</h2>
-        <p class="text-gray-300 text-lg mb-8">Don't miss out on the most awaited CryptHunt. Secure your spot and prepare for an exhilarating experience.</p>
+<section class="text-center py-32 px-8 text-gray-500">
+    <h2 class="uppercase text-4xl font-mono font-bold mb-4">The Hunt is about to begin!</h2>
+    <p class="text-slate-300 text-lg mb-8 font-bebas-regular">Don't miss out on the most awaited CryptHunt. Secure your spot and prepare for an exhilarating experience.</p>
 
-        <div class="flex justify-center space-x-4 text-gray-300 text-lg">
-            <div class="text-center">
-                <div class="text-5xl font-mono" id="days">00</div>
-                <span>Days</span>
-            </div>
-            <div class="text-center">
-                <div class="text-5xl font-mono" id="hours">00</div>
-                <span>Hours</span>
-            </div>
-            <div class="text-center">
-                <div class="text-5xl font-mono" id="minutes">00</div>
-                <span>Minutes</span>
-            </div>
-            <div class="text-center">
-                <div class="text-5xl font-mono" id="seconds">00</div>
-                <span>Seconds</span>
-            </div>
+    <div class="flex justify-center space-x-4 text-gray-300 text-lg">
+        <div class="text-center">
+            <div class="text-5xl font-mono" id="days">00</div>
+            <span>Days</span>
         </div>
-        <div class="mt-8">
-            <button id="start-btn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg">
-                Start the Hunt
-            </button>
+        <div class="text-center">
+            <div class="text-5xl font-mono" id="hours">00</div>
+            <span>Hours</span>
         </div>
-    </section>
+        <div class="text-center">
+            <div class="text-5xl font-mono" id="minutes">00</div>
+            <span>Minutes</span>
+        </div>
+        <div class="text-center">
+            <div class="text-5xl font-mono" id="seconds">00</div>
+            <span>Seconds</span>
+        </div>
+    </div>
+
+    <div class="mt-8">
+        <button id="start-btn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg">
+            Start the Hunt
+        </button>
+    </div>
+
+    <!-- Light gray event and sponsor details -->
+<div class="text-gray-250 text-sm mt-10">
+    <p>An event by 
+        <a href="https://hackfed.com" class="font-semibold text-gray-250 hover:underline">HackFed</a>
+    </p>
+    <p>In Collaboration with 
+        <a href="https://tcc.com" class="font-semibold text-gray-250 hover:underline">TCC</a> 
+        and 
+        <a href="https://www.gbu.ac.in" class="font-semibold text-gray-250 hover:underline">Gautam Buddha University</a>
+    </p>
+    
+    <p class="mt-2">Sponsored by</p>
+    <p class="font-semibold">
+        <a href="https://sponsorwebsite.com" class="text-gray-250 hover:underline">[Sponsor Name]</a>
+    </p>
+</div>
+
+</section>
+
 
     <script>
         // Countdown Timer Script

@@ -7,9 +7,9 @@ export const siteConfig = {
         flowbiteJS:'',
         daisyUI:''
     },
-    bgColor:'gray',  // https://tailwindcss.com/docs/customizing-colors
+    bgColor:'zinc',  // https://tailwindcss.com/docs/customizing-colors
     bgColorDense:'950',
-    logoUrl:'https://github.com/ShlokDhakrey/crypthunt/blob/master/fotor-20250204222741.jpg?raw=true',
+    logoUrl:'https://github.com/ShlokDhakrey/crypthunt/blob/master/HackFed-3D1.jpg?raw=true',
     enableLeadearBoard:true,
     enableSignup:true,
     

@@ -12,16 +12,15 @@ export function headAndNav(mainContent,scripts = ""){
     <script src="${siteConfig.cdns.tailwind}"></script>
 </head>
 
-<body class="bg-${siteConfig.bgColor}-${siteConfig.bgColorDense} text-white">
+<body class="bg-cover bg-center bg-no-repeat min-h-screen text-gray-500 bg-zinc-950"
+      style="background: radial-gradient(circle at center, rgba(45, 45, 45, 0.8), rgba(10, 10, 10, 1));">
 
     <!-- Navbar -->
-    <nav class="flex justify-between items-center py-4 px-8 bg-${siteConfig.bgColor}-${siteConfig.bgColorDense}">
+    <nav class="flex justify-between items-center py-4 px-8 bg-${siteConfig.bgColor}-${siteConfig.bgColorDense} backdrop-blur-xl bg-opacity-60 rounded-2xl shadow-2xl m-4 mt-4">
        <a href="/" class="flex items-center space-x-2">
     <img src="${siteConfig.logoUrl}" alt="CryptHunt Logo" class="w-10 h-10 rounded-full object-cover">
-    <h1 class="text-2xl font-bold">CryptHunt</h1>
+    <h1 class="text-2xl font-serif">CryptHunt</h1>
 </a>
-
-
 
         <ul id="menu" class="hidden md:flex space-x-6 text-lg">
             <li><a href="/" class="hover:text-blue-500">Home</a></li>
@@ -39,8 +38,6 @@ export function headAndNav(mainContent,scripts = ""){
 <button id="menu-btn" aria-label="Toggle menu" class="block md:hidden text-gray-300 text-2xl focus:outline-none">
     <span>☰</span>
 </button>
-
-
         </div>
     </nav>
     <div id="dropdown-menu" class="hidden bg-gray-800 md:hidden">
@@ -106,9 +103,7 @@ export function headAndNav(mainContent,scripts = ""){
     fetchUserStatus();
 </script>
 ${scripts}
-    
     `
-
 
     return div
 }

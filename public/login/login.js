@@ -6,7 +6,7 @@ export const login_html = `
         <h2 class="text-4xl font-bold mb-4">Login to CryptHunt</h2>
         <p class="text-gray-300 text-lg mb-8">Enter your credentials to start your journey in the CryptHunt!</p>
 
-        <div class="max-w-md mx-auto bg-gray-800 p-8 rounded-lg shadow-lg">
+        <div class="max-w-md mx-auto bg-gray-800 p-8 backdrop-blur-xl bg-opacity-60 rounded-2xl shadow-lg">
             <form id="login-form">
                 <div class="mb-4">
                     <label for="username" class="block mb-2">Username</label>
@@ -51,7 +51,7 @@ export const login_html = `
 
                 if (response.ok) {
                     if (json.message === 'Login successful.') {
-                        window.location.href = '/play';
+                        window.location.href = '/play?queNo=1';
                     } else {
                         alert('Unexpected response: ' + json.message);
                     }

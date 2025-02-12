@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { authConfig } from '../config/authConfig';
 import { findOne } from '../db/findOne';
+import { updateOne } from '../db/updateOne';
 import { cors } from 'hono/cors';
 import { prettyJSON } from 'hono/pretty-json';
 import { decode, sign, verify } from 'hono/jwt'
@@ -64,98 +65,31 @@ backend.post('/login', async (c) => {
 })
 
 // play
-backend.post('/getquestion', async (c) => {
+backend.post('/getQuestion', async (c) => {
     try {
-        // Get form data
-        const form = await c.req.formData();
-        const queNo = parseInt(form.get('queNo'), 10);
+        const form = await c.req.json();
+        const queNo = parseInt(form.questionNumber, 10);
+        console.log(queNo)
 
-        // Validate question number
         if (isNaN(queNo) || queNo <= 0) {
             return c.json({ error: true, type: 'invalid question number' });
         }
 
-        // Get user token
-        const token = getCookie(c, 'token');
-        if (!token) {
-            return c.json({ error: true, type: 'user not logged in' });
-        }
-
-        // Decode token
-        const { header, payload } = decode(token);
-        const username = payload?.username;
-
-        console.log('Decoded Header:', header);
-        console.log('Decoded Payload:', payload);
-        console.log('Username:', username);
-
-        if (!username) {
-            return c.json({ error: true, type: 'invalid token data' });
-        }
-
-        // Fetch user data from MongoDB
-        const userData = await findOne(
-            authConfig.mongo.dbUrl,
-            authConfig.mongo.dbKey,
-            authConfig.mongo.dataSource,
-            authConfig.mongo.database,
-            authConfig.mongo.collections.cc1,
-            { name: username },
-            { attemptedQues: 1 }
-        );
-
-        if (!userData || !userData.document) {
-            return c.json({ error: true, type: 'user data not found' });
-        }
-
-        // Ensure attemptedQues is a valid array
-        let attemptedQuestions = userData.document.attemptedQues;
-
-        // Convert string to an array if needed
-        if (typeof attemptedQuestions === 'string') {
-            try {
-                attemptedQuestions = JSON.parse(attemptedQuestions);
-            } catch (error) {
-                console.error('Failed to parse attemptedQues:', error);
-                return c.json({ error: true, type: 'corrupt user data' });
-            }
-        }
-
-        // Ensure it's always an array
-        if (!Array.isArray(attemptedQuestions)) {
-            attemptedQuestions = [];
-        }
-
-        console.log("Attempted Questions:", attemptedQuestions);
-        console.log("Attempted Questions Type:", typeof attemptedQuestions);
-        console.log("Attempted Questions Length:", attemptedQuestions.length);
-
-        // Ensure user is attempting questions sequentially
-        const nextQuestion = attemptedQuestions.length + 1;
-        if (queNo !== nextQuestion) {
-            return c.json({
-                error: true,
-                type: 'attempt questions sequentially',
-                nextQuestion: nextQuestion,
-            });
-        }
-
-        // Fetch the requested question from MongoDB
         const question = await findOne(
             authConfig.mongo.dbUrl,
             authConfig.mongo.dbKey,
             authConfig.mongo.dataSource,
             authConfig.mongo.database,
             authConfig.mongo.collections.cc2,
-            { id: queNo },
+            { id:String(queNo) },
             { value: 1 }
         );
-
+        console.log(question)
         if (!question || !question.document) {
-            return c.json({ error: true, type: 'question not found' });
+            return c.json({ error: true, type: 'question not found' },404);
         }
 
-        return c.json({ error: false, question: question.document });
+        return c.json({ error: false, question: question.document.value });
 
     } catch (error) {
         console.error('Error in /getquestion:', error);
@@ -177,7 +111,28 @@ backend.post('/getUser', async (c) => {
 
 // answer submission
 backend.post('/submit' , async (c) => {
+    const token = getCookie(c, 'token');
+    const username = decode(token).payload.username
+    const data =await c.req.json();
+    const dbupdate = await updateOne(
+        authConfig.mongo.dbUrl,
+        authConfig.mongo.dbKey,
+        authConfig.mongo.dataSource,
+        authConfig.mongo.database,
+        authConfig.mongo.collections.cc1,
+        {"name":username},
+        { 
+            "$set": { 
+                "attemptedQues": data.questionNumber
+              
+            },
+            "$push": { 
+                "responses": data
+            }
+        })
     
+    console.log(dbupdate)
+    return c.json({"nextqueNumber" : parseInt(data.questionNumber,10) + 1})
 });
 
 
@@ -195,6 +150,21 @@ backend.post('/leaderboard' , async (c) => {
     return c.json(scoreJsonArray)
     
 });
+
+backend.post('/getQuestionsStatus' , async (c) => {
+    try {
+        const token = getCookie(c, 'token');
+        const username = decode(token).payload.username
+        console.log(username);
+        const dbfetch = await findOne(authConfig.mongo.dbUrl,authConfig.mongo.dbKey,authConfig.mongo.dataSource,authConfig.mongo.database,authConfig.mongo.collections.cc1,{"name":username},{});
+        console.log(dbfetch);
+        const queNo = dbfetch.document.attemptedQues ;
+       
+         return c.json({lastAttemptedQuestion:queNo})
+    } catch (error) {
+        
+    }
+})
 
 
 export default backend;
