@@ -57,34 +57,49 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Fetch and display the first question
         await fetchQuestion(currentQuestionNumber);
 
-        // Handle submit button click
-        document.getElementById("submit-btn").addEventListener("click", async () => {
-            const answerInput = document.getElementById("answer");
-            const answer = answerInput.value.trim();
+// Handle submit button click
+document.getElementById("submit-btn").addEventListener("click", async () => {
+    const answerInput = document.getElementById("answer");
+    const answer = answerInput.value.trim();
 
-            if (!answer) {
-                alert("Please enter an answer before submitting.");
-                return;
-            }
+    if (!answer) {
+        alert("Please enter an answer before submitting.");
+        return;
+    }
 
-            // Submit answer along with question number
-            const submitResponse = await fetch("/internal/submit", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ questionNumber: currentQuestionNumber, answer }),
-            });
-
-            if (!submitResponse.ok) alert("Failed to submit answer");
-
-            const submitData = await submitResponse.json();
-
-            // Fetch and show the next question
-            if (submitData.nextqueNumber) {
-                fetchQuestion(submitData.nextqueNumber);
-            } else {
-                alert("No more questions available.");
-            }
+    try {
+        // Submit answer along with question number
+        const submitResponse = await fetch("/internal/submit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ questionNumber: currentQuestionNumber, answer }),
         });
+
+        if (!submitResponse.ok) {
+            alert("Failed to submit answer");
+            return; // Stop execution
+        }
+
+        const submitData = await submitResponse.json();
+
+        // If the answer is wrong, alert and stop
+        if (submitData.wrong) {
+            alert("Wrong Answer");
+            return; // Do not fetch next question
+        }
+
+        // If there's a next question, fetch it
+        if (submitData.nextqueNumber) {
+            fetchQuestion(submitData.nextqueNumber);
+        } else {
+            alert("No more questions available.");
+        }
+    } catch (error) {
+        console.error("Error submitting answer:", error);
+        alert("An error occurred. Please try again.");
+    }
+});
+
     } catch (error) {
         console.error("Error:", error);
         alert("An error occurred. Please try again.");

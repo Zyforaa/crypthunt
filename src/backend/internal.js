@@ -112,32 +112,52 @@ backend.post('/getUser', async (c) => {
 
 // answer submission
 backend.post('/submit', async (c) => {
-    const token = getCookie(c, 'token');
-    const username = decode(token).payload.username
-    const data = await c.req.json();
-    //update score here
-     const scoreUpdate = await updateScore(username,data)
-console.log(scoreUpdate)
-    const dbupdate = await updateOne(
-        authConfig.mongo.dbUrl,
-        authConfig.mongo.dbKey,
-        authConfig.mongo.dataSource,
-        authConfig.mongo.database,
-        authConfig.mongo.collections.cc1,
-        { "name": username },
-        {
-            "$set": {
-                "attemptedQues": data.questionNumber
+    try {
+        // Retrieve and decode token
+        const token = getCookie(c, 'token');
+        if (!token) {
+            return c.json({ error: "Unauthorized" }, 401);
+        }
 
-            },
-            "$push": {
-                "responses": data
+        const decodedToken = decode(token);
+        if (!decodedToken || !decodedToken.payload || !decodedToken.payload.username) {
+            return c.json({ error: "Invalid token" }, 401);
+        }
+
+        const username = decodedToken.payload.username;
+        const data = await c.req.json();
+
+        // Update the score
+        const scoreUpdate = await updateScore(username, data);
+        console.log("Score Update:", scoreUpdate);
+
+        if (!scoreUpdate.success) {
+            return c.json({ wrong: true });
+        }
+
+        // Update the database with attempted questions and responses
+        const dbUpdate = await updateOne(
+            authConfig.mongo.dbUrl,
+            authConfig.mongo.dbKey,
+            authConfig.mongo.dataSource,
+            authConfig.mongo.database,
+            authConfig.mongo.collections.cc1,
+            { name: username },
+            {
+                "$set": { attemptedQues: data.questionNumber },
+                "$push": { responses: data }
             }
-        })
+        );
 
-    console.log(dbupdate)
-    return c.json({ "nextqueNumber": parseInt(data.questionNumber, 10) + 1 })
+        console.log("Database Update:", dbUpdate);
+        return c.json({ nextqueNumber: parseInt(data.questionNumber, 10) + 1 });
+        
+    } catch (error) {
+        console.error("Error in /submit:", error);
+        return c.json({ error: "Internal server error" }, 500);
+    }
 });
+
 
 
 //leaderboard

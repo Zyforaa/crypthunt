@@ -10,5 +10,5 @@ export const authConfig = {
     }
 },
 jwtSecret:'cryptic',
-devFolio:'https://portfolio.dhakrey.eu.org'
+devFolio:'https://shlok.dhakrey.in'
 }
