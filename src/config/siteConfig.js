@@ -1,6 +1,6 @@
 export const siteConfig = {
     siteName:'CryptHunt',
-    countdownDate:'2025-02-15T00:00:00',
+    countdownDate:'2025-02-15T17:00:00',
     cdns:{
         tailwind:'https://cdn.tailwindcss.com',
         flowbiteCSS:'',

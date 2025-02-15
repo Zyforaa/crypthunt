@@ -6,7 +6,7 @@ export const rules_html = `
     <ul class="list-disc">
         <li class="text-xl font-bold">Everything you see on your screen may or may not be related to the final answer.
         </li><br>
-        <li class="text-xl font-bold">Each team can have up to 2 participants, and only one team per school is allowed.
+        <li class="text-xl font-bold">Each team can have up to 2 participants.
         </li><br>
         <li class="text-xl font-bold">No team is allowed to help or contact any other participating team regarding the hunt.
         </li><br>
